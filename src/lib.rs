@@ -119,7 +119,7 @@
 //!
 //! # Trait implementations
 //!
-//! The `Copy`, `Clone`, `PartialEq`, `Eq`, `PartialOrd`, `Ord` and `Hash`
+//! The `Copy`, `Clone`, `PartialEq`, `Eq`, and `Hash`
 //! traits automatically derived for the `struct` using the `derive` attribute.
 //! Additional traits can be derived by providing an explicit `derive`
 //! attribute on `flags`.
@@ -217,8 +217,6 @@
 //! ```
 
 #![no_std]
-
-#![doc(html_root_url = "https://docs.rs/bitflags/1.0.1")]
 
 #[cfg(test)]
 #[macro_use]
@@ -369,7 +367,7 @@ macro_rules! __bitflags {
             )+
         }
     ) => {
-        #[derive(Copy, PartialEq, Eq, Clone, PartialOrd, Ord, Hash)]
+        #[derive(Copy, PartialEq, Eq, Clone, Hash)]
         $(#[$outer])*
         $($vis)* struct $BitFlags {
             bits: $T,
@@ -397,6 +395,18 @@ macro_rules! __impl_bitflags {
             )+
         }
     ) => {
+        impl $crate::_core::cmp::PartialOrd for $BitFlags {
+            fn partial_cmp(&self, other: &Self) -> $crate::_core::option::Option<$crate::_core::cmp::Ordering> {
+                use $crate::_core::cmp::Ordering::*;
+                use $crate::_core::option::Option::*;
+                match (self.contains(*other), other.contains(*self)) {
+                    (false, false) => None,
+                    (false, true)  => Some(Less),
+                    (true,  false) => Some(Greater),
+                    (true,  true)  => Some(Equal),
+                }
+            }
+        }
         impl $crate::_core::fmt::Debug for $BitFlags {
             fn fmt(&self, f: &mut $crate::_core::fmt::Formatter) -> $crate::_core::fmt::Result {
                 // This convoluted approach is to handle #[cfg]-based flag
@@ -986,23 +996,30 @@ mod tests {
         b = Flags::B;
         assert!(a < b);
         a = Flags::C;
-        assert!(!(a < b) && b < a);
+        assert!(!(a < b) && !(b < a));
         b = Flags::C | Flags::B;
         assert!(a < b);
     }
 
     #[test]
     fn test_ord() {
-        let mut a = Flags::empty();
-        let mut b = Flags::empty();
+        let a = Flags::A;
+        let b = Flags::B;
+        let e = Flags::empty();
 
-        assert!(a <= b && a >= b);
-        a = Flags::A;
-        assert!(a > b && a >= b);
-        assert!(b < a && b <= a);
-        b = Flags::B;
-        assert!(b > a && b >= a);
-        assert!(a < b && a <= b);
+        assert!(e <= e && e >= e);
+        assert!(a > e && a >= e);
+        assert!(e < a && e <= a);
+        assert!(b > e && b >= e);
+        assert!(e < b && e <= b);
+
+        let ab = a | b;
+        assert!(ab > e && ab >= e);
+        assert!(e < ab && e <= ab);
+        assert!(ab > a && ab >= a);
+        assert!(a < ab && a <= ab);
+        assert!(ab > b && ab >= b);
+        assert!(b < ab && b <= ab);
     }
 
     fn hash<T: Hash>(t: &T) -> u64 {
