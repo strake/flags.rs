@@ -13,5 +13,8 @@ A macro to generate structures which behave like bitflags.
 name = "bitflags"
 
 [features]
-default = ["example_generated"]
+default = []
 example_generated = []
+
+[package.metadata.docs.rs]
+features = [ "example_generated" ]
