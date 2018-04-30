@@ -11,7 +11,7 @@ fn run_mode(mode: Mode) {
     let config = compiletest::Config {
         mode: mode,
         src_base: format!("tests/{}", mode).into(),
-        target_rustcflags: fs::read_dir("target/debug/deps").unwrap().map(Result::unwrap).filter(|entry| {
+        target_rustcflags: fs::read_dir("../target/debug/deps").unwrap().map(Result::unwrap).filter(|entry| {
 	    let file_name = entry.file_name();
 	    let file_name = file_name.to_string_lossy();
 	    file_name.starts_with("libbitflags-") && file_name.ends_with(".rlib")

@@ -6,7 +6,7 @@ version = "0.0.0"
 unstable = ["compiletest_rs"]
 
 [dependencies]
-bitflags = { path = "../" }
+flags = { path = "../" }
 compiletest_rs = { version = "*", optional = true }
 serde = "1.0"
 serde_derive = "1.0"
