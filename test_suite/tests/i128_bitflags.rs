@@ -1,7 +1,3 @@
-#![cfg(feature = "unstable")]
-
-#![feature(i128_type)]
-
 extern crate bitflags;
 
 bitflags::bitflags! {
