@@ -302,7 +302,7 @@ macro_rules! bitflags {
             $(
                 $(#[$inner:ident $($args:tt)*])*
                 const $Flag:ident = $value:expr;
-            )+
+            )*
         }
     ) => {
         __bitflags! {
@@ -311,7 +311,7 @@ macro_rules! bitflags {
                 $(
                     $(#[$inner $($args)*])*
                     $Flag = $value;
-                )+
+                )*
             }
         }
     };
@@ -321,7 +321,7 @@ macro_rules! bitflags {
             $(
                 $(#[$inner:ident $($args:tt)*])*
                 const $Flag:ident = $value:expr;
-            )+
+            )*
         }
     ) => {
         __bitflags! {
@@ -330,7 +330,7 @@ macro_rules! bitflags {
                 $(
                     $(#[$inner $($args)*])*
                     $Flag = $value;
-                )+
+                )*
             }
         }
     };
@@ -340,7 +340,7 @@ macro_rules! bitflags {
             $(
                 $(#[$inner:ident $($args:tt)*])*
                 const $Flag:ident = $value:expr;
-            )+
+            )*
         }
     ) => {
         __bitflags! {
@@ -349,7 +349,7 @@ macro_rules! bitflags {
                 $(
                     $(#[$inner $($args)*])*
                     $Flag = $value;
-                )+
+                )*
             }
         }
     };
@@ -364,7 +364,7 @@ macro_rules! __bitflags {
             $(
                 $(#[$inner:ident $($args:tt)*])*
                 $Flag:ident = $value:expr;
-            )+
+            )*
         }
     ) => {
         #[derive(Copy, PartialEq, Eq, Clone, Hash)]
@@ -378,7 +378,7 @@ macro_rules! __bitflags {
                 $(
                     $(#[$inner $($args)*])*
                     $Flag = $value;
-                )+
+                )*
             }
         }
     };
@@ -392,7 +392,7 @@ macro_rules! __impl_bitflags {
             $(
                 $(#[$attr:ident $($args:tt)*])*
                 $Flag:ident = $value:expr;
-            )+
+            )*
         }
     ) => {
         impl $crate::_core::cmp::PartialOrd for $BitFlags {
@@ -422,7 +422,7 @@ macro_rules! __impl_bitflags {
                     $(
                         #[inline]
                         fn $Flag(&self) -> bool { false }
-                    )+
+                    )*
                 }
 
                 // Conditionally override the check for just those flags that
@@ -437,7 +437,7 @@ macro_rules! __impl_bitflags {
                                 self.bits & Self::$Flag.bits == Self::$Flag.bits
                             }
                         }
-                    )+
+                    )*
                 }
 
                 let mut first = true;
@@ -449,7 +449,7 @@ macro_rules! __impl_bitflags {
                         first = false;
                         try!(f.write_str(stringify!($Flag)));
                     }
-                )+
+                )*
                 if first {
                     try!(f.write_str("(empty)"));
                 }
@@ -482,7 +482,7 @@ macro_rules! __impl_bitflags {
             $(
                 $(#[$attr $($args)*])*
                 pub const $Flag: $BitFlags = $BitFlags { bits: $value };
-            )+
+            )*
 
             /// Returns an empty set of flags.
             #[inline]
@@ -499,7 +499,7 @@ macro_rules! __impl_bitflags {
                     $(
                         #[inline]
                         fn $Flag() -> $T { 0 }
-                    )+
+                    )*
                 }
                 impl __BitFlags for $BitFlags {
                     $(
@@ -509,9 +509,9 @@ macro_rules! __impl_bitflags {
                             $(? #[$attr $($args)*])*
                             fn $Flag() -> $T { Self::$Flag.bits }
                         }
-                    )+
+                    )*
                 }
-                $BitFlags { bits: $(<$BitFlags as __BitFlags>::$Flag())|+ }
+                $BitFlags { bits: $(<$BitFlags as __BitFlags>::$Flag()|)* 0 }
             }
 
             /// Returns the raw value of the flags currently stored.
