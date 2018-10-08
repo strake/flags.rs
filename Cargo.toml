@@ -1,6 +1,6 @@
 [package]
 name = "flags"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["M Farkas-Dyck <strake888@gmail.com>"]
 license = "MIT/Apache-2.0"
 keywords = ["bit", "bitmask", "bitflags", "flags"]
