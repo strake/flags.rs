@@ -485,13 +485,13 @@ macro_rules! __impl_bitflags {
 
             /// Returns the set containing all flags.
             #[inline]
-            pub fn all() -> $BitFlags {
+            pub const fn all() -> $BitFlags {
                 // See `Debug::fmt` for why this approach is taken.
                 #[allow(non_snake_case)]
                 trait __BitFlags {
                     $(
                         #[inline]
-                        fn $Flag() -> $T { 0 }
+                        const $Flag: $T = 0;
                     )*
                 }
                 impl __BitFlags for $BitFlags {
@@ -500,11 +500,11 @@ macro_rules! __impl_bitflags {
                             #[allow(deprecated)]
                             #[inline]
                             $(? #[$attr $($args)*])*
-                            fn $Flag() -> $T { Self::$Flag.bits }
+                            const $Flag: $T = Self::$Flag.bits;
                         }
                     )*
                 }
-                $BitFlags { bits: $(<$BitFlags as __BitFlags>::$Flag()|)* 0 }
+                $BitFlags { bits: $(<$BitFlags as __BitFlags>::$Flag|)* 0 }
             }
 
             /// Returns the raw value of the flags currently stored.
@@ -527,32 +527,32 @@ macro_rules! __impl_bitflags {
             /// Convert from underlying bit representation, dropping any bits
             /// that do not correspond to flags.
             #[inline]
-            pub fn from_bits_truncate(bits: $T) -> $BitFlags {
-                $BitFlags { bits } & $BitFlags::all()
+            pub const fn from_bits_truncate(bits: $T) -> $BitFlags {
+                $BitFlags { bits: bits & Self::all().bits }
             }
 
             /// Returns `true` if no flags are currently stored.
             #[inline]
-            pub fn is_empty(&self) -> bool {
-                *self == $BitFlags::empty()
+            pub const fn is_empty(&self) -> bool {
+                0 == self.bits
             }
 
             /// Returns `true` if all flags are currently set.
             #[inline]
-            pub fn is_all(&self) -> bool {
-                *self == $BitFlags::all()
+            pub const fn is_all(&self) -> bool {
+                self.bits == Self::all().bits
             }
 
             /// Returns `true` if there are flags common to both `self` and `other`.
             #[inline]
-            pub fn intersects(&self, other: $BitFlags) -> bool {
-                !(*self & other).is_empty()
+            pub const fn intersects(&self, other: $BitFlags) -> bool {
+                0 != self.bits & other.bits
             }
 
             /// Returns `true` all of the flags in `other` are contained within `self`.
             #[inline]
-            pub fn contains(&self, other: $BitFlags) -> bool {
-                (*self & other) == other
+            pub const fn contains(&self, other: $BitFlags) -> bool {
+                self.bits & other.bits == other.bits
             }
 
             /// Inserts the specified flags in-place.
@@ -738,6 +738,41 @@ macro_rules! __impl_bitflags {
     ) => {
         $(#[$filtered])*
         fn $($item)*
+    };
+
+    (
+        $(#[$filtered:meta])*
+        ? #[cfg $($cfgargs:tt)*]
+        $(? #[$rest:ident $($restargs:tt)*])*
+        const $($item:tt)*
+    ) => {
+        $crate::__impl_bitflags! {
+            $(#[$filtered])*
+            #[cfg $($cfgargs)*]
+            $(? #[$rest $($restargs)*])*
+            const $($item)*
+        }
+    };
+    (
+        $(#[$filtered:meta])*
+        // $next != `cfg`
+        ? #[$next:ident $($nextargs:tt)*]
+        $(? #[$rest:ident $($restargs:tt)*])*
+        const $($item:tt)*
+    ) => {
+        $crate::__impl_bitflags! {
+            $(#[$filtered])*
+            // $next filtered out
+            $(? #[$rest $($restargs)*])*
+            const $($item)*
+        }
+    };
+    (
+        $(#[$filtered:meta])*
+        const $($item:tt)*
+    ) => {
+        $(#[$filtered])*
+        const $($item)*
     };
 }
 
