@@ -2,10 +2,9 @@
 
 #![feature(i128_type)]
 
-#[macro_use]
 extern crate bitflags;
 
-bitflags! {
+bitflags::bitflags! {
     /// baz
     struct Flags128: u128 {
         const A = 0x0000_0000_0000_0000_0000_0000_0000_0001;

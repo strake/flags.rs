@@ -18,10 +18,9 @@
 //! # Example
 //!
 //! ```
-//! #[macro_use]
 //! extern crate bitflags;
 //!
-//! bitflags! {
+//! bitflags::bitflags! {
 //!     struct Flags: u32 {
 //!         const A = 0b00000001;
 //!         const B = 0b00000010;
@@ -47,12 +46,11 @@
 //! implementations:
 //!
 //! ```
-//! #[macro_use]
 //! extern crate bitflags;
 //!
 //! use std::fmt;
 //!
-//! bitflags! {
+//! bitflags::bitflags! {
 //!     struct Flags: u32 {
 //!         const A = 0b00000001;
 //!         const B = 0b00000010;
@@ -89,16 +87,15 @@
 //! the current module by adding `pub` before `flags`:
 //!
 //! ```
-//! #[macro_use]
 //! extern crate bitflags;
 //!
 //! mod example {
-//!     bitflags! {
+//!     bitflags::bitflags! {
 //!         pub struct Flags1: u32 {
 //!             const A = 0b00000001;
 //!         }
 //!     }
-//!     bitflags! {
+//!     bitflags::bitflags! {
 //! #       pub
 //!         struct Flags2: u32 {
 //!             const B = 0b00000010;
@@ -170,10 +167,9 @@
 //! on the generated struct), you can simply derive `Default`:
 //!
 //! ```
-//! #[macro_use]
 //! extern crate bitflags;
 //!
-//! bitflags! {
+//! bitflags::bitflags! {
 //!     // Results in default value with bits: 0
 //!     #[derive(Default)]
 //!     struct Flags: u32 {
@@ -192,10 +188,9 @@
 //! If your default value is not equal to `0` you need to implement `Default` yourself:
 //!
 //! ```
-//! #[macro_use]
 //! extern crate bitflags;
 //!
-//! bitflags! {
+//! bitflags::bitflags! {
 //!     struct Flags: u32 {
 //!         const A = 0b00000001;
 //!         const B = 0b00000010;
@@ -234,10 +229,9 @@ pub extern crate core as _core;
 /// # Example
 ///
 /// ```
-/// #[macro_use]
 /// extern crate bitflags;
 ///
-/// bitflags! {
+/// bitflags::bitflags! {
 ///     struct Flags: u32 {
 ///         const A = 0b00000001;
 ///         const B = 0b00000010;
@@ -260,12 +254,11 @@ pub extern crate core as _core;
 /// implementations:
 ///
 /// ```
-/// #[macro_use]
 /// extern crate bitflags;
 ///
 /// use std::fmt;
 ///
-/// bitflags! {
+/// bitflags::bitflags! {
 ///     struct Flags: u32 {
 ///         const A = 0b00000001;
 ///         const B = 0b00000010;
@@ -305,7 +298,7 @@ macro_rules! bitflags {
             )*
         }
     ) => {
-        __bitflags! {
+        $crate::__bitflags! {
             $(#[$outer])*
             (pub) $BitFlags: $T {
                 $(
@@ -324,7 +317,7 @@ macro_rules! bitflags {
             )*
         }
     ) => {
-        __bitflags! {
+        $crate::__bitflags! {
             $(#[$outer])*
             () $BitFlags: $T {
                 $(
@@ -343,7 +336,7 @@ macro_rules! bitflags {
             )*
         }
     ) => {
-        __bitflags! {
+        $crate::__bitflags! {
             $(#[$outer])*
             (pub ($($vis)+)) $BitFlags: $T {
                 $(
@@ -373,7 +366,7 @@ macro_rules! __bitflags {
             bits: $T,
         }
 
-        __impl_bitflags! {
+        $crate::__impl_bitflags! {
             $BitFlags: $T {
                 $(
                     $(#[$inner $($args)*])*
@@ -429,7 +422,7 @@ macro_rules! __impl_bitflags {
                 // are not #[cfg]ed away.
                 impl __BitFlags for $BitFlags {
                     $(
-                        __impl_bitflags! {
+                        $crate::__impl_bitflags! {
                             #[allow(deprecated)]
                             #[inline]
                             $(? #[$attr $($args)*])*
@@ -503,7 +496,7 @@ macro_rules! __impl_bitflags {
                 }
                 impl __BitFlags for $BitFlags {
                     $(
-                        __impl_bitflags! {
+                        $crate::__impl_bitflags! {
                             #[allow(deprecated)]
                             #[inline]
                             $(? #[$attr $($args)*])*
@@ -718,7 +711,7 @@ macro_rules! __impl_bitflags {
         $(? #[$rest:ident $($restargs:tt)*])*
         fn $($item:tt)*
     ) => {
-        __impl_bitflags! {
+        $crate::__impl_bitflags! {
             $(#[$filtered])*
             #[cfg $($cfgargs)*]
             $(? #[$rest $($restargs)*])*
@@ -732,7 +725,7 @@ macro_rules! __impl_bitflags {
         $(? #[$rest:ident $($restargs:tt)*])*
         fn $($item:tt)*
     ) => {
-        __impl_bitflags! {
+        $crate::__impl_bitflags! {
             $(#[$filtered])*
             // $next filtered out
             $(? #[$rest $($restargs)*])*

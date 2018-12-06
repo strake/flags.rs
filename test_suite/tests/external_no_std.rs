@@ -1,9 +1,8 @@
 #![no_std]
 
-#[macro_use]
 extern crate bitflags;
 
-bitflags! {
+bitflags::bitflags! {
     /// baz
     struct Flags: u32 {
         const A = 0b00000001;
