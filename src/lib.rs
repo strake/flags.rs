@@ -781,8 +781,8 @@ pub mod example_generated;
 
 #[cfg(test)]
 mod tests {
-    use std::hash::{Hash, Hasher};
     use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
 
     bitflags! {
         #[doc = "> The first principle is that you must not fool yourself — and"]
@@ -825,7 +825,7 @@ mod tests {
     }
 
     #[test]
-    fn test_bits(){
+    fn test_bits() {
         assert_eq!(Flags::empty().bits(), 0b00000000);
         assert_eq!(Flags::A.bits(), 0b00000001);
         assert_eq!(Flags::ABC.bits(), 0b00000111);
@@ -858,7 +858,7 @@ mod tests {
     }
 
     #[test]
-    fn test_is_empty(){
+    fn test_is_empty() {
         assert!(Flags::empty().is_empty());
         assert!(!Flags::A.is_empty());
         assert!(!Flags::ABC.is_empty());
@@ -917,7 +917,7 @@ mod tests {
     }
 
     #[test]
-    fn test_insert(){
+    fn test_insert() {
         let mut e1 = Flags::A;
         let e2 = Flags::A | Flags::B;
         e1.insert(e2);
@@ -929,7 +929,7 @@ mod tests {
     }
 
     #[test]
-    fn test_remove(){
+    fn test_remove() {
         let mut e1 = Flags::A | Flags::B;
         let e2 = Flags::A | Flags::C;
         e1.remove(e2);
@@ -944,10 +944,10 @@ mod tests {
     fn test_operators() {
         let e1 = Flags::A | Flags::C;
         let e2 = Flags::B | Flags::C;
-        assert_eq!((e1 | e2), Flags::ABC);     // union
-        assert_eq!((e1 & e2), Flags::C);       // intersection
-        assert_eq!((e1 - e2), Flags::A);       // set difference
-        assert_eq!(!e2, Flags::A);             // set complement
+        assert_eq!((e1 | e2), Flags::ABC); // union
+        assert_eq!((e1 & e2), Flags::C); // intersection
+        assert_eq!((e1 - e2), Flags::A); // set difference
+        assert_eq!(!e2, Flags::A); // set complement
         assert_eq!(e1 ^ e2, Flags::A | Flags::B); // toggle
         let mut e3 = e1;
         e3.toggle(e2);
@@ -1011,8 +1011,7 @@ mod tests {
         assert_eq!([].iter().cloned().collect::<Flags>(), Flags::empty());
         assert_eq!([Flags::A, Flags::B].iter().cloned().collect::<Flags>(),
                    Flags::A | Flags::B);
-        assert_eq!([Flags::A, Flags::ABC].iter().cloned().collect::<Flags>(),
-                   Flags::ABC);
+        assert_eq!([Flags::A, Flags::ABC].iter().cloned().collect::<Flags>(), Flags::ABC);
     }
 
     #[test]
@@ -1110,16 +1109,11 @@ mod tests {
         }
 
         #[test]
-        fn test_private() {
-
-            let _ = PrivateFlags::Y;
-        }
+        fn test_private() { let _ = PrivateFlags::Y; }
     }
 
     #[test]
-    fn test_public() {
-        let _ = submodule::PublicFlags::X;
-    }
+    fn test_public() { let _ = submodule::PublicFlags::X; }
 
     mod t1 {
         mod foo {
@@ -1190,14 +1184,10 @@ mod tests {
             mod test {
                 // Note: due to `pub (in super)`,
                 // this cannot be accessed directly by the testing code.
-                pub (in super) fn value() -> u8 {
-                    super::submodule::Test::FOO.bits()
-                }
+                pub(super) fn value() -> u8 { super::submodule::Test::FOO.bits() }
             }
 
-            pub fn value() -> u8 {
-                test::value()
-            }
+            pub fn value() -> u8 { test::value() }
         }
 
         assert_eq!(module::value(), 1)

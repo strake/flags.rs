@@ -2,8 +2,8 @@
 
 extern crate compiletest_rs as compiletest;
 
-use std::result::Result;
 use std::fs;
+use std::result::Result;
 
 use compiletest::common::Mode;
 
@@ -27,6 +27,4 @@ fn run_mode(mode: Mode) {
 }
 
 #[test]
-fn compile_test() {
-    run_mode(Mode::CompileFail);
-}
+fn compile_test() { run_mode(Mode::CompileFail); }
